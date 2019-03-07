@@ -105,6 +105,7 @@ allprojects {
 
                         configure(c.create("${name}")) {
                             defFile filePath
+                            extraOpts "-r", "build/classes/kotlin/$targetName/main"
                         }
                     }
                 }
@@ -118,6 +119,7 @@ allprojects {
 
                         configure(c.create("${name}")) {
                             defFile filePath
+                            extraOpts "-r", "build/classes/kotlin/$targetName/main"
                         }
                     }
                 }
