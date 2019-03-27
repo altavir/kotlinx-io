@@ -84,19 +84,31 @@ actual interface ByteReadChannel {
      * Reads a long number (suspending if not enough bytes available) or fails if channel has been closed
      * and not enough bytes.
      */
-    actual suspend fun readLong(): Long
+    @Deprecated("Binary compatibility.", level = DeprecationLevel.HIDDEN)
+    @Suppress("ACTUAL_WITHOUT_EXPECT")
+    actual suspend fun readLong(): Long {
+        return readLong()
+    }
 
     /**
      * Reads an int number (suspending if not enough bytes available) or fails if channel has been closed
      * and not enough bytes.
      */
-    actual suspend fun readInt(): Int
+    @Deprecated("Binary compatibility.", level = DeprecationLevel.HIDDEN)
+    @Suppress("ACTUAL_WITHOUT_EXPECT")
+    actual suspend fun readInt(): Int {
+        return readInt()
+    }
 
     /**
      * Reads a short number (suspending if not enough bytes available) or fails if channel has been closed
      * and not enough bytes.
      */
-    actual suspend fun readShort(): Short
+    @Deprecated("Binary compatibility.", level = DeprecationLevel.HIDDEN)
+    @Suppress("ACTUAL_WITHOUT_EXPECT")
+    actual suspend fun readShort(): Short {
+        return readShort()
+    }
 
     /**
      * Reads a byte (suspending if no bytes available yet) or fails if channel has been closed
@@ -114,13 +126,21 @@ actual interface ByteReadChannel {
      * Reads double number (suspending if not enough bytes available) or fails if channel has been closed
      * and not enough bytes.
      */
-    actual suspend fun readDouble(): Double
+    @Deprecated("Binary compatibility.", level = DeprecationLevel.HIDDEN)
+    @Suppress("ACTUAL_WITHOUT_EXPECT")
+    actual suspend fun readDouble(): Double {
+        return readDouble()
+    }
 
     /**
      * Reads float number (suspending if not enough bytes available) or fails if channel has been closed
      * and not enough bytes.
      */
-    actual suspend fun readFloat(): Float
+    @Deprecated("Binary compatibility.", level = DeprecationLevel.HIDDEN)
+    @Suppress("ACTUAL_WITHOUT_EXPECT")
+    actual suspend fun readFloat(): Float {
+        return readFloat()
+    }
 
 
     /**

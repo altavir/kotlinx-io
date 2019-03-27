@@ -71,18 +71,21 @@ expect interface ByteReadChannel {
      * Reads a long number (suspending if not enough bytes available) or fails if channel has been closed
      * and not enough bytes.
      */
+    @Deprecated("Binary compatibility.", level = DeprecationLevel.HIDDEN)
     suspend fun readLong(): Long
 
     /**
      * Reads an int number (suspending if not enough bytes available) or fails if channel has been closed
      * and not enough bytes.
      */
+    @Deprecated("Binary compatibility.", level = DeprecationLevel.HIDDEN)
     suspend fun readInt(): Int
 
     /**
      * Reads a short number (suspending if not enough bytes available) or fails if channel has been closed
      * and not enough bytes.
      */
+    @Deprecated("Binary compatibility.", level = DeprecationLevel.HIDDEN)
     suspend fun readShort(): Short
 
     /**
@@ -101,14 +104,15 @@ expect interface ByteReadChannel {
      * Reads double number (suspending if not enough bytes available) or fails if channel has been closed
      * and not enough bytes.
      */
+    @Deprecated("Binary compatibility.", level = DeprecationLevel.HIDDEN)
     suspend fun readDouble(): Double
 
     /**
      * Reads float number (suspending if not enough bytes available) or fails if channel has been closed
      * and not enough bytes.
      */
+    @Deprecated("Binary compatibility.", level = DeprecationLevel.HIDDEN)
     suspend fun readFloat(): Float
-
 
     /**
      * Starts non-suspendable read session. After channel preparation [consumer] lambda will be invoked immediately
