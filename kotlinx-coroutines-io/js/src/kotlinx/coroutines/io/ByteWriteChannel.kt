@@ -35,7 +35,14 @@ actual interface ByteWriteChannel {
         "Setting byte order is no longer supported. Read/write in big endian and use reverseByteOrder() extensions.",
         level = DeprecationLevel.ERROR
     )
+    @Suppress("ACTUAL_WITHOUT_EXPECT")
     actual var writeByteOrder: ByteOrder
+        get() = ByteOrder.BIG_ENDIAN
+        set(newOrder) {
+            if (newOrder != ByteOrder.BIG_ENDIAN) {
+                throw UnsupportedOperationException("Only big endian is supported.")
+            }
+        }
 
     /**
      * Number of bytes written to the channel.

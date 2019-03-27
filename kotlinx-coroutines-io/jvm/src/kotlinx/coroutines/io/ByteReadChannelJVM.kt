@@ -12,6 +12,7 @@ import java.nio.*
  *
  * Operations on this channel cannot be invoked concurrently.
  */
+@Suppress("NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS")
 actual interface ByteReadChannel {
     /**
      * Returns number of bytes that can be read without suspension. Read operations do no suspend and return
@@ -35,7 +36,14 @@ actual interface ByteReadChannel {
         "Setting byte order is no longer supported. Read/write in big endian and use reverseByteOrder() extensions.",
         level = DeprecationLevel.ERROR
     )
+    @Suppress("ACTUAL_WITHOUT_EXPECT")
     actual var readByteOrder: ByteOrder
+        get() = ByteOrder.BIG_ENDIAN
+        set(newOrder) {
+            if (newOrder != ByteOrder.BIG_ENDIAN) {
+                throw UnsupportedOperationException("Only big endian is supported.")
+            }
+        }
 
     /**
      * Number of bytes read from the channel.
