@@ -37,6 +37,20 @@ suspend fun ByteReadChannel.readDouble(): Double {
     return readPrimitiveTemplate(8, Double.NaN, { loadDoubleAt(it) }, { reverseByteOrder() })
 }
 
+suspend fun ByteReadChannel.readFully(dst: ByteArray, offset: Int = 0, length: Int = dst.size - offset) {
+    var dstPosition = offset
+    val dstEnd = dstPosition + length
+
+    while (dstPosition < dstEnd) {
+        read { source, start, endExclusive ->
+            val partLength = minOf((dstEnd - dstPosition).toLong(), endExclusive - start).toInt()
+            source.copyTo(dst, start, partLength, dstPosition)
+            dstPosition += partLength
+            partLength
+        }
+    }
+}
+
 private suspend inline fun <T> ByteReadChannel.readPrimitiveTemplate(
     sizeInBytes: Int,
     initial: T,
