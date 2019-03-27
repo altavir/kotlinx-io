@@ -27,7 +27,7 @@ actual class IoBuffer actual constructor(
     override val endOfInput: Boolean get() = !canRead()
 
     init {
-        require(contentCapacity >= 0) { "contentCapacity shouln't be negative: $contentCapacity" }
+        require(contentCapacity >= 0) { "contentCapacity shouldn't be negative: $contentCapacity" }
         require(this !== origin) { "origin shouldn't point to itself" }
     }
 
