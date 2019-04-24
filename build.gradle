@@ -1,10 +1,25 @@
 import org.jetbrains.kotlin.konan.target.HostManager
 
 buildscript {
-    ext.publishSnapshotTrain = rootProject.properties['publishSnapshotTrain'] != null
-
-    if (publishSnapshotTrain) {
-        ext.kotlin_version = '1.3-SNAPSHOT'
+    /*
+     * These property group is used to build kotlinx-io against Kotlin compiler snapshot.
+     * How does it work:
+     * When build_snapshot_train is set to true, kotlin_version property is overridden with kotlin_snapshot_version,
+     * atomicfu_version and coroutines_version is overwritten by TeamCity environment
+     * (AFU and kx is built with snapshot and published to mavenLocal as previous step or the snapshot build).
+     * DO NOT change the name of these properties without adapting kotlinx.train build chain.
+     */
+    def prop = rootProject.properties['build_snapshot_train']
+    ext.build_snapshot_train = prop != null && prop != ""
+    if (build_snapshot_train) {
+        ext.kotlin_version = rootProject.properties['kotlin_snapshot_version']
+        if (kotlin_version == null) {
+            throw new IllegalArgumentException("'kotlin_snapshot_version' should be defined when building with snapshot compiler")
+        }
+        repositories {
+            mavenLocal()
+            maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+        }
     }
  
     repositories {
@@ -13,10 +28,9 @@ buildscript {
         maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
         maven { url 'https://dl.bintray.com/jetbrains/kotlin-native-dependencies' }
         maven { url 'https://plugins.gradle.org/m2/' }
-        maven { url "https://teamcity.jetbrains.com/guestAuth/app/rest/builds/id:1907319/artifacts/content/maven" }
         jcenter()
 
-        if (publishSnapshotTrain) {
+        if (build_snapshot_train) {
             maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
             mavenLocal()
         }
@@ -26,7 +40,7 @@ buildscript {
         classpath "org.jetbrains.kotlin:kotlin-allopen:$kotlin_version"
         classpath "org.jetbrains.kotlin:kotlin-frontend-plugin:0.0.37"
         classpath group: 'net.rubygrapefruit', name: 'native-platform', version: '0.10'
-        classpath "org.jetbrains.kotlinx:atomicfu-gradle-plugin:$atomic_fu_version"
+        classpath "org.jetbrains.kotlinx:atomicfu-gradle-plugin:$atomicfu_version"
         classpath "com.moowork.gradle:gradle-node-plugin:$gradle_node_version"
     }
 }
@@ -47,9 +61,26 @@ allprojects {
         project.version = DeployVersion
     }
 
-    if (publishSnapshotTrain) {
-        maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
-        mavenLocal()
+    if (build_snapshot_train) {
+        def deployVersion = properties['DeployVersion']
+        if (deployVersion != null) version = deployVersion
+        ext.kotlin_version = rootProject.properties['kotlin_snapshot_version']
+        println "Using Kotlin $kotlin_version for project $it"
+
+        def skipSnapshotChecks = rootProject.properties['skip_snapshot_checks'] != null
+        if (!skipSnapshotChecks && version != atomicfu_version) {
+            throw new IllegalStateException("Current deploy version is $version, but atomicfu version is not overridden ($atomicfu_version) for $it")
+        }
+
+        if (!skipSnapshotChecks && version != coroutines_version) {
+            throw new IllegalStateException("Current deploy version is $version, but coroutines version is not overridden ($coroutines_version) for $it")
+        }
+
+        kotlin_version = rootProject.properties['kotlin_snapshot_version']
+        repositories {
+            mavenLocal()
+            maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+        }
     }
 
     repositories {
@@ -137,6 +168,26 @@ allprojects {
                         configure(c.create("${name}")) {
                             defFile filePath
                         }
+                    }
+                }
+            }
+        }
+    }
+}
+
+println("Using Kotlin compiler version: $org.jetbrains.kotlin.config.KotlinCompilerVersion.VERSION")
+if (build_snapshot_train) {
+    gradle.taskGraph.whenReady { // Hack to prevent kotlinCompilerClasspath + apiCheck interference
+        println "Manifest of kotlin-compiler-embeddable.jar for kotlinx-io"
+        configure(subprojects.findAll { it.name == "kotlinx-io" }) {
+            configurations.matching { it.name == "kotlinCompilerClasspath" }.all {
+                resolvedConfiguration.getFiles().findAll { it.name.contains("kotlin-compiler-embeddable") }.each {
+                    def manifest = zipTree(it).matching {
+                        include 'META-INF/MANIFEST.MF'
+                    }.getFiles().first()
+
+                    manifest.readLines().each {
+                        println it
                     }
                 }
             }

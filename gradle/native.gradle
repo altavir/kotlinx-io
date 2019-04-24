@@ -14,7 +14,7 @@ kotlin {
 
     sourceSets {
         nativeMain.dependencies {
-            api "org.jetbrains.kotlinx:atomicfu-native:$atomic_fu_version"
+            api "org.jetbrains.kotlinx:atomicfu-native:$atomicfu_version"
         }
 
         nativeMain { dependsOn commonMain }

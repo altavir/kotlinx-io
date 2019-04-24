@@ -1,7 +1,7 @@
 kotlin.sourceSets {
     commonMain.dependencies {
         api group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-common', version: kotlin_version
-        api "org.jetbrains.kotlinx:atomicfu-common:$atomic_fu_version"
+        api "org.jetbrains.kotlinx:atomicfu-common:$atomicfu_version"
     }
 
     commonTest.dependencies {
