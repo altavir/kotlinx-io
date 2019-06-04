@@ -1,4 +1,4 @@
-apply from: rootProject.file('gradle/nodejs.gradle')
+//apply from: rootProject.file('gradle/nodejs.gradle')
 
 kotlin {
     targets {
@@ -36,7 +36,7 @@ compileTestKotlinJs {
 
 task assembleWeb(type: Sync, group: 'build', dependsOn: compileTestKotlinJs) {
     from compileKotlinJs.destinationDir
-    into "$node.nodeModulesDir/node_modules"
+    //into "$node.nodeModulesDir/node_modules"
 
     def configuration = configurations.jsTestRuntimeClasspath
     from(files {
@@ -53,7 +53,7 @@ task assembleWeb(type: Sync, group: 'build', dependsOn: compileTestKotlinJs) {
 
 def mochaChromeTestPage = file("$buildDir/test-page.html")
 
-task prepareMocha(dependsOn: installDependenciesMocha) {
+task prepareMocha(dependsOn: 'installDependenciesMocha') {
     outputs.file(mochaChromeTestPage)
 }
 
@@ -84,23 +84,25 @@ prepareMocha.doLast {
     """
 }
 
-task testMochaChrome(type: NodeTask, dependsOn: prepareMocha) {
+/*
+task testMochaChrome(type: NodeTask, dependsOn: 'prepareMocha') {
     script = file("$node.nodeModulesDir/node_modules/mocha-headless-chrome/bin/start")
     description = "Run js tests in mocha-headless-chrome"
     args = [compileTestKotlinJs.outputFile, '--file', mochaChromeTestPage]
     if (project.hasProperty("teamcity")) args += ['--reporter', 'mocha-teamcity-reporter']
 }
 
-task testMochaNode(type: NodeTask, dependsOn: prepareMocha) {
+task testMochaNode(type: NodeTask, dependsOn: 'prepareMocha') {
     script = file("$node.nodeModulesDir/node_modules/mocha/bin/mocha")
     description = "Run js tests in mocha-nodejs"
     args = [compileTestKotlinJs.outputFile,  '--require', 'source-map-support/register']
     if (project.hasProperty("teamcity")) args += ['--reporter', 'mocha-teamcity-reporter']
 }
+*/
 
-npmInstall.dependsOn assembleWeb
-jsTest.dependsOn testMochaNode
+//npmInstall.dependsOn assembleWeb
+//jsTest.dependsOn testMochaNode
 
 if (!project.hasProperty("teamcity") || project.hasProperty("enable-js-tests")) {
-    jsTest.dependsOn testMochaChrome
+ //   jsTest.dependsOn testMochaChrome
 }
