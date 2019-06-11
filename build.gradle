@@ -193,4 +193,8 @@ if (build_snapshot_train) {
             }
         }
     }
+
+    afterEvaluate {
+        kotlinNpmResolve.enabled = false
+    }
 }
