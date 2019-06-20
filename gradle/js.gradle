@@ -1,4 +1,4 @@
-apply from: rootProject.file('gradle/nodejs.gradle')
+//apply from: rootProject.file('gradle/nodejs.gradle')
 
 kotlin {
     targets {
@@ -33,7 +33,7 @@ compileTestKotlinJs {
     kotlinOptions.main = "call"
     kotlinOptions.sourceMapEmbedSources = 'always'
 }
-
+/*
 task assembleWeb(type: Sync, group: 'build', dependsOn: compileTestKotlinJs) {
     from compileKotlinJs.destinationDir
     into "$node.nodeModulesDir/node_modules"
@@ -104,3 +104,5 @@ jsTest.dependsOn testMochaNode
 if (!project.hasProperty("teamcity") || project.hasProperty("enable-js-tests")) {
     jsTest.dependsOn testMochaChrome
 }
+
+*/
