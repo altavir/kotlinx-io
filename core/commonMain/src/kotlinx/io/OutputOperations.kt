@@ -84,19 +84,12 @@ public fun Output.writeInput(input: Input, atMost: Int = Binary.INFINITE): Int {
  */
 @ExperimentalIoApi
 public fun Output.writeBinary(binary: Binary) {
-    binary.read {
-        writeInput(this, binary.size)
-    }
-}
-
-/**
- * Write content of this binary to given output
- */
-@ExperimentalIoApi
-public fun Binary.writeTo(output: Output) {
-    read {
-        output.run {
-            writeInput(this@read, atMost = size)
+    if (binary is ArrayBinary) {
+        //optimization for byte array
+        writeArray(binary.array)
+    } else {
+        binary.read {
+            writeInput(this, binary.size)
         }
     }
 }

@@ -1,5 +1,6 @@
 package kotlinx.io
 
+import kotlinx.io.buffer.DEFAULT_BUFFER_SIZE
 import kotlin.math.min
 
 /**
@@ -15,6 +16,15 @@ inline class ArrayBinary(val array: ByteArray) : RandomAccessBinary {
             from,
             min(from + atMost, array.size)
         ).use(block)
+    }
+
+    companion object {
+        fun write(bufferSize: Int = DEFAULT_BUFFER_SIZE, builder: Output.() -> Unit): ArrayBinary {
+            val bytes = buildBytes(bufferSize, builder)
+            val array = bytes.toByteArray()
+            bytes.close()
+            return array.asBinary()
+        }
     }
 }
 
